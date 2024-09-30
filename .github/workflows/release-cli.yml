@@ -116,11 +116,11 @@ jobs:
           git commit -m "chore: update brew to version ${{ env.VERSION }} for ${{ matrix.target }}"
           git push -u origin update-formula-${{ matrix.target }}-${{ github.sha }}
 
-      - name: Create Pull Request
-        env:
-          GH_TOKEN: ${{ secrets.PAT }}
-        run: |
-          gh pr create --base main --head update-formula-${{ matrix.target }}-${{ github.sha }} --title "Update Homebrew formula for ${{ matrix.target }}" --body "Automated PR to update Homebrew formula for ${{ matrix.target }}"
+      # - name: Create Pull Request
+      #   env:
+      #     GH_TOKEN: ${{ secrets.PAT }}
+      #   run: |
+      #     gh pr create --base main --head update-formula-${{ matrix.target }}-${{ github.sha }} --title "Update Homebrew formula for ${{ matrix.target }}" --body "Automated PR to update Homebrew formula for ${{ matrix.target }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
