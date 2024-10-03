@@ -44,4 +44,8 @@ rev = "2023.04.15"
 dynamic = true
 
 
+[workspace.metadata.patch]
+crates = ["hf-hub"]
 
+[patch.crates-io]
+hf-hub = { path = "./target/patch/hf-hub-0.3.2" }

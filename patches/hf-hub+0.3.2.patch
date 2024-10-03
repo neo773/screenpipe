@@ -1,0 +1,17 @@
+diff --git a/src/api/tokio.rs b/src/api/tokio.rs
+index 9d6a772..e3d95b8 100644
+--- a/src/api/tokio.rs
++++ b/src/api/tokio.rs
+@@ -124,6 +124,12 @@ impl ApiBuilder {
+         }
+     }
+ 
++    /// Set endpoint example 'https://hf-mirror.com'
++    pub fn with_endpoint(mut self, endpoint: &str) -> Self {
++        self.endpoint = endpoint.to_string();
++        self
++    }
++
+     /// Wether to show a progressbar
+     pub fn with_progress(mut self, progress: bool) -> Self {
+         self.progress = progress;

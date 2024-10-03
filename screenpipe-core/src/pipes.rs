@@ -483,7 +483,7 @@ mod pipes {
 
     pub async fn download_pipe(source: &str, screenpipe_dir: PathBuf) -> anyhow::Result<PathBuf> {
         info!("Processing pipe from source: {}", source);
-
+// here
         if let Ok(parsed_url) = Url::parse(source) {
             // Handle URLs
             let client = Client::new();

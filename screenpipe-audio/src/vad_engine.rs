@@ -108,6 +108,7 @@ impl SileroVad {
 
     async fn download_model() -> anyhow::Result<PathBuf> {
         debug!("Downloading SileroVAD model...");
+        // here
         let url =
             "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx";
         let response = reqwest::get(url).await?;
