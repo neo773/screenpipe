@@ -59,6 +59,7 @@ use tower_http::{cors::CorsLayer, trace::DefaultMakeSpan};
 use enigo::{Enigo, Key, Settings};
 
 use screenpipe_audio::LAST_AUDIO_CAPTURE;
+use oasgen::{oasgen, OaSchema, Server as OaServer};
 
 use std::str::FromStr;
 
@@ -77,7 +78,7 @@ pub struct AppState {
 }
 
 // Update the SearchQuery struct
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub(crate) struct SearchQuery {
     q: Option<String>,
     #[serde(flatten)]
@@ -105,7 +106,7 @@ pub(crate) struct SearchQuery {
     speaker_ids: Option<Vec<i64>>,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub(crate) struct PaginationQuery {
     #[serde(default = "default_limit")]
     #[serde(deserialize_with = "deserialize_number_from_string")]
@@ -130,36 +131,36 @@ pub struct PaginatedResponse<T> {
     pub pagination: PaginationInfo,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(OaSchema, Serialize, Deserialize)]
 pub struct PaginationInfo {
     pub limit: u32,
     pub offset: u32,
     pub total: i64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 pub struct UpdateSpeakerRequest {
     pub id: i64,
     pub name: Option<String>,
     pub metadata: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 pub struct SearchSpeakersRequest {
     pub name: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 pub struct DeleteSpeakerRequest {
     pub id: i64,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 struct MarkAsHallucinationRequest {
     speaker_id: i64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 #[serde(tag = "type", content = "content")]
 pub enum ContentItem {
     OCR(OCRContent),
@@ -167,7 +168,7 @@ pub enum ContentItem {
     UI(UiContent),
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 pub struct OCRContent {
     pub frame_id: i64,
     pub text: String,
@@ -180,7 +181,7 @@ pub struct OCRContent {
     pub frame: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 pub struct AudioContent {
     pub chunk_id: i64,
     pub transcription: String,
@@ -195,7 +196,7 @@ pub struct AudioContent {
     pub end_time: Option<f64>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 pub struct UiContent {
     pub id: i64,
     pub text: String,
@@ -207,13 +208,13 @@ pub struct UiContent {
     pub offset_index: i64,
 }
 
-#[derive(Serialize)]
+#[derive(OaSchema, Serialize)]
 pub(crate) struct ListDeviceResponse {
     name: String,
     is_default: bool,
 }
 
-#[derive(Serialize)]
+#[derive(OaSchema, Serialize)]
 pub struct MonitorInfo {
     id: u32,
     name: String,
@@ -222,22 +223,22 @@ pub struct MonitorInfo {
     is_default: bool,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct AddTagsRequest {
     tags: Vec<String>,
 }
 
-#[derive(Serialize)]
+#[derive(OaSchema, Serialize)]
 pub struct AddTagsResponse {
     success: bool,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct RemoveTagsRequest {
     tags: Vec<String>,
 }
 
-#[derive(Serialize)]
+#[derive(OaSchema, Serialize)]
 pub struct RemoveTagsResponse {
     success: bool,
 }
@@ -247,7 +248,7 @@ fn default_limit() -> u32 {
     20
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(OaSchema, Serialize, Deserialize)]
 pub struct HealthCheckResponse {
     pub status: String,
     pub last_frame_timestamp: Option<DateTime<Utc>>,
@@ -523,6 +524,7 @@ pub(crate) async fn remove_tags(
     }
 }
 
+#[oasgen]
 pub async fn health_check(State(state): State<Arc<AppState>>) -> JsonResponse<HealthCheckResponse> {
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -632,17 +634,17 @@ pub async fn health_check(State(state): State<Arc<AppState>>) -> JsonResponse<He
 }
 
 // Request and response structs
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 struct DownloadPipeRequest {
     url: String,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 struct RunPipeRequest {
     pipe_id: String,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 struct UpdatePipeConfigRequest {
     pipe_id: String,
     config: serde_json::Value,
@@ -864,6 +866,10 @@ impl Server {
                 None
             },
         });
+        let server = OaServer::axum()
+        .route_yaml_spec("/openapi.yaml") // the spec will be available at /openapi.yaml
+        .route_json_spec("/openapi.json") // the spec will be available at /openapi.json
+        .freeze();
 
         let app = create_router()
             .layer(ApiPluginLayer::new(api_plugin))
@@ -881,7 +887,8 @@ impl Server {
                 TraceLayer::new_for_http()
                     .make_span_with(DefaultMakeSpan::new().include_headers(true)),
             )
-            .with_state(app_state);
+            .with_state(app_state)
+            .merge(server.into_router());
 
         info!("Server starting on {}", self.addr);
 
@@ -932,7 +939,7 @@ async fn validate_media_handler(
     }
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 struct RawSqlQuery {
     query: String,
 }
@@ -953,26 +960,26 @@ async fn execute_raw_sql(
     }
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct AddContentRequest {
     pub device_name: String,     // Moved device_name to the top level
     pub content: AddContentData, // The actual content (either Frame or Transcription)
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct AddContentData {
     pub content_type: String,
     pub data: ContentData,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 #[serde(untagged)]
 pub enum ContentData {
     Frames(Vec<FrameContent>),
     Transcription(AudioTranscription),
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct FrameContent {
     pub file_path: String,
     pub timestamp: Option<DateTime<Utc>>,
@@ -982,7 +989,7 @@ pub struct FrameContent {
     pub tags: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(OaSchema, Serialize, Deserialize, Debug)]
 pub struct OCRResult {
     pub text: String,
     pub text_json: Option<String>,
@@ -990,13 +997,13 @@ pub struct OCRResult {
     pub focused: Option<bool>,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct AudioTranscription {
     pub transcription: String,
     pub transcription_engine: String,
 }
 
-#[derive(Serialize)]
+#[derive(OaSchema, Serialize)]
 pub struct AddContentResponse {
     pub success: bool,
     pub message: Option<String>,
@@ -1256,13 +1263,13 @@ fn mouse_button_from_string(
 
 // Add these new structs:
 #[cfg(feature = "experimental")]
-#[derive(Deserialize, Debug)]
+#[derive(OaSchema, Deserialize, Debug)]
 struct InputControlRequest {
     action: InputAction,
 }
 
 #[cfg(feature = "experimental")]
-#[derive(Deserialize, Debug)]
+#[derive(OaSchema, Deserialize, Debug)]
 #[serde(tag = "type", content = "data")]
 enum InputAction {
     KeyPress(String),
@@ -1272,19 +1279,19 @@ enum InputAction {
 }
 
 #[cfg(feature = "experimental")]
-#[derive(Serialize)]
+#[derive(OaSchema, Serialize)]
 struct InputControlResponse {
     success: bool,
 }
 
-#[derive(Deserialize, PartialEq)]
+#[derive(OaSchema, Deserialize, PartialEq)]
 enum Order {
     Ascending,
     Descending,
 }
 
 // Add this new struct
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct StreamFramesRequest {
     start_time: DateTime<Utc>,
     end_time: DateTime<Utc>,
@@ -1293,13 +1300,13 @@ pub struct StreamFramesRequest {
     // order: Order,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(OaSchema, Debug, Serialize)]
 pub struct StreamTimeSeriesResponse {
     pub timestamp: DateTime<Utc>,
     pub devices: Vec<DeviceFrameResponse>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(OaSchema, Debug, Serialize)]
 pub struct DeviceFrameResponse {
     pub device_id: String,
     pub frame: String, // base64 encoded image
@@ -1307,7 +1314,7 @@ pub struct DeviceFrameResponse {
     pub audio: Vec<AudioData>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(OaSchema, Debug, Serialize)]
 pub struct DeviceMetadata {
     pub file_path: String,
     pub app_name: String,
@@ -1315,7 +1322,7 @@ pub struct DeviceMetadata {
     pub ocr_text: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(OaSchema, Debug, Serialize)]
 pub struct AudioData {
     pub device_name: String,
     pub is_input: bool,
@@ -1363,7 +1370,7 @@ impl From<TimeSeriesFrame> for StreamTimeSeriesResponse {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(OaSchema, Deserialize, Debug)]
 pub struct GetUnnamedSpeakersRequest {
     limit: u32,
     offset: u32,
@@ -1379,7 +1386,7 @@ fn default_speaker_ids() -> Option<Vec<i64>> {
     None
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(OaSchema, Deserialize, Debug)]
 pub struct GetSimilarSpeakersRequest {
     speaker_id: i64,
     limit: u32,
@@ -1735,12 +1742,12 @@ pub async fn delete_pipe_handler(
 }
 
 // Add this struct for the request payload
-#[derive(Debug, Deserialize)]
+#[derive(OaSchema, Debug, Deserialize)]
 pub struct DeletePipeRequest {
     pipe_id: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(OaSchema, Deserialize, Debug)]
 struct MergeSpeakersRequest {
     speaker_to_keep_id: i64,
     speaker_to_merge_id: i64,
