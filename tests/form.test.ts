@@ -1,6 +1,6 @@
-import { multipartFormRequestOptions, createForm } from 'test-sc/core';
-import { Blob } from 'test-sc/_shims/index';
-import { toFile } from 'test-sc';
+import { multipartFormRequestOptions, createForm } from 'test-sc-api/core';
+import { Blob } from 'test-sc-api/_shims/index';
+import { toFile } from 'test-sc-api';
 
 describe('form data validation', () => {
   test('valid values do not error', async () => {

@@ -1,6 +1,6 @@
 # Test Sc Node API Library
 
-[![NPM version](https://img.shields.io/npm/v/test-sc.svg)](https://npmjs.org/package/test-sc) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/test-sc)
+[![NPM version](https://img.shields.io/npm/v/test-sc-api.svg)](https://npmjs.org/package/test-sc-api) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/test-sc-api)
 
 This library provides convenient access to the Test Sc REST API from server-side TypeScript or JavaScript.
 
@@ -11,7 +11,7 @@ It is generated with [Stainless](https://www.stainlessapi.com/).
 ## Installation
 
 ```sh
-npm install test-sc
+npm install test-sc-api
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ The full API of this library can be found in [api.md](api.md).
 
 <!-- prettier-ignore -->
 ```js
-import TestSc from 'test-sc';
+import TestSc from 'test-sc-api';
 
 const client = new TestSc();
 
@@ -54,7 +54,7 @@ This library includes TypeScript definitions for all request params and response
 
 <!-- prettier-ignore -->
 ```ts
-import TestSc from 'test-sc';
+import TestSc from 'test-sc-api';
 
 const client = new TestSc();
 
@@ -288,11 +288,11 @@ add the following import before your first import `from "TestSc"`:
 ```ts
 // Tell TypeScript and the package to use the global web fetch instead of node-fetch.
 // Note, despite the name, this does not add any polyfills, but expects them to be provided if needed.
-import 'test-sc/shims/web';
-import TestSc from 'test-sc';
+import 'test-sc-api/shims/web';
+import TestSc from 'test-sc-api';
 ```
 
-To do the inverse, add `import "test-sc/shims/node"` (which does import polyfills).
+To do the inverse, add `import "test-sc-api/shims/node"` (which does import polyfills).
 This can also be useful if you are getting the wrong TypeScript types for `Response` ([more details](https://github.com/neo773/screenpipe/tree/main/src/_shims#readme)).
 
 ### Logging and middleware
@@ -302,7 +302,7 @@ which can be used to inspect or alter the `Request` or `Response` before/after e
 
 ```ts
 import { fetch } from 'undici'; // as one example
-import TestSc from 'test-sc';
+import TestSc from 'test-sc-api';
 
 const client = new TestSc({
   fetch: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {

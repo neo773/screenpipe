@@ -5,8 +5,8 @@
   "compilerOptions": {
     "rootDir": "./dist/src",
     "paths": {
-      "test-sc/*": ["dist/src/*"],
-      "test-sc": ["dist/src/index.ts"],
+      "test-sc-api/*": ["dist/src/*"],
+      "test-sc-api": ["dist/src/index.ts"],
     },
     "noEmit": false,
     "declaration": true,
