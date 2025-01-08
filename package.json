@@ -1,8 +1,8 @@
 {
   "name": "test-sc-openapi",
   "version": "0.0.1-alpha.1",
-  "description": "The official TypeScript library for the Nep773 API",
-  "author": "Nep773 <dev-feedback@nep773.com>",
+  "description": "The official TypeScript library for the Neo773 API",
+  "author": "Neo773 <dev-feedback@nep773.com>",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "type": "commonjs",
