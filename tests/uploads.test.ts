@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { toFile, type ResponseLike } from 'test-sc/uploads';
-import { File } from 'test-sc/_shims/index';
+import { toFile, type ResponseLike } from 'test-sc-api/uploads';
+import { File } from 'test-sc-api/_shims/index';
 
 class MyClass {
   name: string = 'foo';

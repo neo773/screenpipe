@@ -42,12 +42,12 @@ export let isFsReadStream: Shims['isFsReadStream'] | undefined = undefined;
 export function setShims(shims: Shims, options: { auto: boolean } = { auto: false }) {
   if (auto) {
     throw new Error(
-      `you must \`import 'test-sc/shims/${shims.kind}'\` before importing anything else from test-sc`,
+      `you must \`import 'test-sc-api/shims/${shims.kind}'\` before importing anything else from test-sc-api`,
     );
   }
   if (kind) {
     throw new Error(
-      `can't \`import 'test-sc/shims/${shims.kind}'\` after \`import 'test-sc/shims/${kind}'\``,
+      `can't \`import 'test-sc-api/shims/${shims.kind}'\` after \`import 'test-sc-api/shims/${kind}'\``,
     );
   }
   auto = options.auto;

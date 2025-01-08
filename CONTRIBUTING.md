@@ -55,12 +55,12 @@ $ cd screenpipe
 # With yarn
 $ yarn link
 $ cd ../my-package
-$ yarn link test-sc
+$ yarn link test-sc-api
 
 # With pnpm
 $ pnpm link --global
 $ cd ../my-package
-$ pnpm link -—global test-sc
+$ pnpm link -—global test-sc-api
 ```
 
 ## Running tests

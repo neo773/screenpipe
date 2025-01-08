@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { TestSc } from 'test-sc';
+import { TestSc } from 'test-sc-api';
 
 const { stringifyQuery } = TestSc.prototype as any;
 

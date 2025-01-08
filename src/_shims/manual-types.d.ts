@@ -4,8 +4,8 @@
 /**
  * Types will get added to this namespace when you import one of the following:
  *
- *   import 'test-sc/shims/node'
- *   import 'test-sc/shims/web'
+ *   import 'test-sc-api/shims/node'
+ *   import 'test-sc-api/shims/web'
  *
  * Importing more than one will cause type and runtime errors.
  */
