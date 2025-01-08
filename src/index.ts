@@ -48,7 +48,7 @@ export interface ClientOptions {
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
    *
-   * Defaults to process.env['NEP773_BASE_URL'].
+   * Defaults to process.env['NEO773_BASE_URL'].
    */
   baseURL?: string | null | undefined;
 
@@ -103,15 +103,15 @@ export interface ClientOptions {
 }
 
 /**
- * API Client for interfacing with the Nep773 API.
+ * API Client for interfacing with the Neo773 API.
  */
-export class Nep773 extends Core.APIClient {
+export class Neo773 extends Core.APIClient {
   private _options: ClientOptions;
 
   /**
-   * API Client for interfacing with the Nep773 API.
+   * API Client for interfacing with the Neo773 API.
    *
-   * @param {string} [opts.baseURL=process.env['NEP773_BASE_URL'] ?? https://localhost:8080/test-api] - Override the default base URL for the API.
+   * @param {string} [opts.baseURL=process.env['NEO773_BASE_URL'] ?? https://localhost:8080/test-api] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {number} [opts.httpAgent] - An HTTP agent used to manage HTTP(s) connections.
    * @param {Core.Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -119,7 +119,7 @@ export class Nep773 extends Core.APIClient {
    * @param {Core.Headers} opts.defaultHeaders - Default headers to include with every request to the API.
    * @param {Core.DefaultQuery} opts.defaultQuery - Default query parameters to include with every request to the API.
    */
-  constructor({ baseURL = Core.readEnv('NEP773_BASE_URL'), ...opts }: ClientOptions = {}) {
+  constructor({ baseURL = Core.readEnv('NEO773_BASE_URL'), ...opts }: ClientOptions = {}) {
     const options: ClientOptions = {
       ...opts,
       baseURL: baseURL || `https://localhost:8080/test-api`,
@@ -162,10 +162,10 @@ export class Nep773 extends Core.APIClient {
     return qs.stringify(query, { arrayFormat: 'comma' });
   }
 
-  static Nep773 = this;
+  static Neo773 = this;
   static DEFAULT_TIMEOUT = 60000; // 1 minute
 
-  static Nep773Error = Errors.Nep773Error;
+  static Neo773Error = Errors.Neo773Error;
   static APIError = Errors.APIError;
   static APIConnectionError = Errors.APIConnectionError;
   static APIConnectionTimeoutError = Errors.APIConnectionTimeoutError;
@@ -183,17 +183,17 @@ export class Nep773 extends Core.APIClient {
   static fileFromPath = Uploads.fileFromPath;
 }
 
-Nep773.Healthcheck = Healthcheck;
-Nep773.Audio = Audio;
-Nep773.Vision = Vision;
-Nep773.Tags = Tags;
-Nep773.Pipes = Pipes;
-Nep773.Health = Health;
-Nep773.RawSql = RawSql;
-Nep773.Add = Add;
-Nep773.Speakers = Speakers;
-Nep773.Experimental = Experimental;
-export declare namespace Nep773 {
+Neo773.Healthcheck = Healthcheck;
+Neo773.Audio = Audio;
+Neo773.Vision = Vision;
+Neo773.Tags = Tags;
+Neo773.Pipes = Pipes;
+Neo773.Health = Health;
+Neo773.RawSql = RawSql;
+Neo773.Add = Add;
+Neo773.Speakers = Speakers;
+Neo773.Experimental = Experimental;
+export declare namespace Neo773 {
   export type RequestOptions = Core.RequestOptions;
 
   export { Healthcheck as Healthcheck, type HealthcheckRetrieveResponse as HealthcheckRetrieveResponse };
@@ -258,7 +258,7 @@ export declare namespace Nep773 {
 
 export { toFile, fileFromPath } from './uploads';
 export {
-  Nep773Error,
+  Neo773Error,
   APIError,
   APIConnectionError,
   APIConnectionTimeoutError,
@@ -273,4 +273,4 @@ export {
   UnprocessableEntityError,
 } from './error';
 
-export default Nep773;
+export default Neo773;

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Nep773 from 'test-sc-openapi';
+import Neo773 from 'test-sc-openapi';
 import { APIUserAbortError } from 'test-sc-openapi';
 import { Headers } from 'test-sc-openapi/core';
 import defaultFetch, { Response, type RequestInit, type RequestInfo } from 'node-fetch';
@@ -20,7 +20,7 @@ describe('instantiate client', () => {
   });
 
   describe('defaultHeaders', () => {
-    const client = new Nep773({
+    const client = new Neo773({
       baseURL: 'http://localhost:5000/',
       defaultHeaders: { 'X-My-Default-Header': '2' },
     });
@@ -51,12 +51,12 @@ describe('instantiate client', () => {
 
   describe('defaultQuery', () => {
     test('with null query params given', () => {
-      const client = new Nep773({ baseURL: 'http://localhost:5000/', defaultQuery: { apiVersion: 'foo' } });
+      const client = new Neo773({ baseURL: 'http://localhost:5000/', defaultQuery: { apiVersion: 'foo' } });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo');
     });
 
     test('multiple default query params', () => {
-      const client = new Nep773({
+      const client = new Neo773({
         baseURL: 'http://localhost:5000/',
         defaultQuery: { apiVersion: 'foo', hello: 'world' },
       });
@@ -64,13 +64,13 @@ describe('instantiate client', () => {
     });
 
     test('overriding with `undefined`', () => {
-      const client = new Nep773({ baseURL: 'http://localhost:5000/', defaultQuery: { hello: 'world' } });
+      const client = new Neo773({ baseURL: 'http://localhost:5000/', defaultQuery: { hello: 'world' } });
       expect(client.buildURL('/foo', { hello: undefined })).toEqual('http://localhost:5000/foo');
     });
   });
 
   test('custom fetch', async () => {
-    const client = new Nep773({
+    const client = new Neo773({
       baseURL: 'http://localhost:5000/',
       fetch: (url) => {
         return Promise.resolve(
@@ -86,7 +86,7 @@ describe('instantiate client', () => {
   });
 
   test('custom signal', async () => {
-    const client = new Nep773({
+    const client = new Neo773({
       baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
       fetch: (...args) => {
         return new Promise((resolve, reject) =>
@@ -117,7 +117,7 @@ describe('instantiate client', () => {
       return new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Nep773({ baseURL: 'http://localhost:5000/', fetch: testFetch });
+    const client = new Neo773({ baseURL: 'http://localhost:5000/', fetch: testFetch });
 
     await client.patch('/foo');
     expect(capturedRequest?.method).toEqual('PATCH');
@@ -125,55 +125,55 @@ describe('instantiate client', () => {
 
   describe('baseUrl', () => {
     test('trailing slash', () => {
-      const client = new Nep773({ baseURL: 'http://localhost:5000/custom/path/' });
+      const client = new Neo773({ baseURL: 'http://localhost:5000/custom/path/' });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
 
     test('no trailing slash', () => {
-      const client = new Nep773({ baseURL: 'http://localhost:5000/custom/path' });
+      const client = new Neo773({ baseURL: 'http://localhost:5000/custom/path' });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
 
     afterEach(() => {
-      process.env['NEP773_BASE_URL'] = undefined;
+      process.env['NEO773_BASE_URL'] = undefined;
     });
 
     test('explicit option', () => {
-      const client = new Nep773({ baseURL: 'https://example.com' });
+      const client = new Neo773({ baseURL: 'https://example.com' });
       expect(client.baseURL).toEqual('https://example.com');
     });
 
     test('env variable', () => {
-      process.env['NEP773_BASE_URL'] = 'https://example.com/from_env';
-      const client = new Nep773({});
+      process.env['NEO773_BASE_URL'] = 'https://example.com/from_env';
+      const client = new Neo773({});
       expect(client.baseURL).toEqual('https://example.com/from_env');
     });
 
     test('empty env variable', () => {
-      process.env['NEP773_BASE_URL'] = ''; // empty
-      const client = new Nep773({});
+      process.env['NEO773_BASE_URL'] = ''; // empty
+      const client = new Neo773({});
       expect(client.baseURL).toEqual('https://localhost:8080/test-api');
     });
 
     test('blank env variable', () => {
-      process.env['NEP773_BASE_URL'] = '  '; // blank
-      const client = new Nep773({});
+      process.env['NEO773_BASE_URL'] = '  '; // blank
+      const client = new Neo773({});
       expect(client.baseURL).toEqual('https://localhost:8080/test-api');
     });
   });
 
   test('maxRetries option is correctly set', () => {
-    const client = new Nep773({ maxRetries: 4 });
+    const client = new Neo773({ maxRetries: 4 });
     expect(client.maxRetries).toEqual(4);
 
     // default
-    const client2 = new Nep773({});
+    const client2 = new Neo773({});
     expect(client2.maxRetries).toEqual(2);
   });
 });
 
 describe('request building', () => {
-  const client = new Nep773({});
+  const client = new Neo773({});
 
   describe('Content-Length', () => {
     test('handles multi-byte characters', () => {
@@ -215,7 +215,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Nep773({ timeout: 10, fetch: testFetch });
+    const client = new Neo773({ timeout: 10, fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
@@ -245,7 +245,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Nep773({ fetch: testFetch, maxRetries: 4 });
+    const client = new Neo773({ fetch: testFetch, maxRetries: 4 });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
 
@@ -269,7 +269,7 @@ describe('retries', () => {
       capturedRequest = init;
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
-    const client = new Nep773({ fetch: testFetch, maxRetries: 4 });
+    const client = new Neo773({ fetch: testFetch, maxRetries: 4 });
 
     expect(
       await client.request({
@@ -298,7 +298,7 @@ describe('retries', () => {
       capturedRequest = init;
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
-    const client = new Nep773({
+    const client = new Neo773({
       fetch: testFetch,
       maxRetries: 4,
       defaultHeaders: { 'X-Stainless-Retry-Count': null },
@@ -330,7 +330,7 @@ describe('retries', () => {
       capturedRequest = init;
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
-    const client = new Nep773({ fetch: testFetch, maxRetries: 4 });
+    const client = new Neo773({ fetch: testFetch, maxRetries: 4 });
 
     expect(
       await client.request({
@@ -357,7 +357,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Nep773({ fetch: testFetch });
+    const client = new Neo773({ fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
@@ -384,7 +384,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Nep773({ fetch: testFetch });
+    const client = new Neo773({ fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
