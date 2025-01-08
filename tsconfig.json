@@ -9,9 +9,9 @@
     "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
-      "test-sc-api/_shims/auto/*": ["src/_shims/auto/*-node"],
-      "test-sc-api/*": ["src/*"],
-      "test-sc-api": ["src/index.ts"]
+      "test-sc/_shims/auto/*": ["src/_shims/auto/*-node"],
+      "test-sc/*": ["src/*"],
+      "test-sc": ["src/index.ts"]
     },
     "noEmit": true,
 
