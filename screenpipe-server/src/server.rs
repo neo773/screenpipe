@@ -18,11 +18,7 @@ use crate::{
     video::{finish_ffmpeg_process, start_ffmpeg_process, write_frame_to_ffmpeg, MAX_FPS},
     video_cache::{FrameCache, TimeSeriesFrame},
     video_utils::{
-        merge_videos,
-        validate_media,
-        MergeVideosRequest,
-        MergeVideosResponse,
-        ValidateMediaParams
+        merge_videos, validate_media, MergeVideosRequest, MergeVideosResponse, ValidateMediaParams,
     },
     DatabaseManager,
 };
@@ -58,8 +54,8 @@ use tower_http::{cors::CorsLayer, trace::DefaultMakeSpan};
 #[cfg(feature = "experimental")]
 use enigo::{Enigo, Key, Settings};
 
+use oasgen::{oasgen, OaSchema, Server};
 use screenpipe_audio::LAST_AUDIO_CAPTURE;
-use oasgen::{oasgen, OaSchema, Server };
 
 use std::str::FromStr;
 
@@ -867,6 +863,15 @@ impl SCServer {
             },
         });
 
+        let cors = CorsLayer::new()
+            .allow_origin(Any)
+            .allow_methods(Any)
+            .allow_headers(Any)
+            .expose_headers([
+                axum::http::header::CONTENT_TYPE,
+                axum::http::header::CACHE_CONTROL,
+            ]);
+
         // Create the OpenAPI server
         let server = Server::axum()
             .get("/healthcheck", health_check)
@@ -874,20 +879,51 @@ impl SCServer {
             .route_json_spec("/openapi.json")
             .freeze();
 
-        // Create the main router and merge with OpenAPI routes
-        let app = create_router()
+        // Build the main router with all routes
+        let app = Router::new()
+            .route("/search", get(search))
+            .route("/audio/list", get(api_list_audio_devices))
+            .route("/vision/list", post(api_list_monitors))
+            .route("/tags/:content_type/:id", post(add_tags).delete(remove_tags))
+            .route("/pipes/info/:pipe_id", get(get_pipe_info_handler))
+            .route("/pipes/list", get(list_pipes_handler))
+            .route("/pipes/download", post(download_pipe_handler))
+            .route("/pipes/enable", post(run_pipe_handler))
+            .route("/pipes/disable", post(stop_pipe_handler))
+            .route("/pipes/update", post(update_pipe_config_handler))
+            .route("/pipes/delete", post(delete_pipe_handler))
+            .route("/health", get(health_check))
+            .route("/raw_sql", post(execute_raw_sql))
+            .route("/add", post(add_to_database))
+            .route("/stream/frames", get(stream_frames_handler))
+            .route("/speakers/unnamed", get(get_unnamed_speakers_handler))
+            .route("/speakers/update", post(update_speaker_handler))
+            .route("/speakers/search", get(search_speakers_handler))
+            .route("/speakers/delete", post(delete_speaker_handler))
+            .route("/speakers/hallucination", post(mark_as_hallucination_handler))
+            .route("/speakers/merge", post(merge_speakers_handler))
+            .route("/speakers/similar", get(get_similar_speakers_handler))
+            .route("/experimental/frames/merge", post(merge_frames_handler))
+            .route("/experimental/validate/media", get(validate_media_handler))
             .merge(server.into_router())
             .with_state(app_state)
+            .layer(cors)
             .layer(TraceLayer::new_for_http().make_span_with(DefaultMakeSpan::default()));
+
+        #[cfg(feature = "experimental")]
+        let app = app.route("/experimental/input_control", post(input_control_handler));
 
         // Create the listener
         let listener = TcpListener::bind(&self.addr).await?;
         info!("Server listening on {}", self.addr);
 
         // Start serving
-        serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
-            .await
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+        serve(
+            listener,
+            app.into_make_service_with_connect_info::<SocketAddr>(),
+        )
+        .await
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
         Ok(())
     }
@@ -915,15 +951,12 @@ async fn validate_media_handler(
     State(_state): State<Arc<AppState>>,
     Query(params): Query<ValidateMediaParams>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
-
     match validate_media(&params.file_path).await {
         Ok(_) => Ok(Json(json!({"status": "valid media file"}))),
-        Err(e) => {
-            Err((
-                StatusCode::EXPECTATION_FAILED,
-                Json(json!({"status": e.to_string()})),
-            ))
-        }
+        Err(e) => Err((
+            StatusCode::EXPECTATION_FAILED,
+            Json(json!({"status": e.to_string()})),
+        )),
     }
 }
 
@@ -1564,57 +1597,6 @@ async fn get_similar_speakers_handler(
         })?;
 
     Ok(JsonResponse(similar_speakers))
-}
-
-pub fn create_router() -> Router<Arc<AppState>> {
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods(Any)
-        .allow_headers(Any)
-        .expose_headers([
-            axum::http::header::CONTENT_TYPE,
-            axum::http::header::CACHE_CONTROL,
-        ]); // Important for SSE
-
-    let router = Router::new()
-        .route("/search", get(search))
-        .route("/audio/list", get(api_list_audio_devices))
-        .route("/vision/list", post(api_list_monitors))
-        .route(
-            "/tags/:content_type/:id",
-            post(add_tags).delete(remove_tags),
-        )
-        .route("/pipes/info/:pipe_id", get(get_pipe_info_handler))
-        .route("/pipes/list", get(list_pipes_handler))
-        .route("/pipes/download", post(download_pipe_handler))
-        .route("/pipes/enable", post(run_pipe_handler))
-        .route("/pipes/disable", post(stop_pipe_handler))
-        .route("/pipes/update", post(update_pipe_config_handler))
-        .route("/pipes/delete", post(delete_pipe_handler))
-        .route("/health", get(health_check))
-        .route("/raw_sql", post(execute_raw_sql))
-        .route("/add", post(add_to_database))
-        .route("/stream/frames", get(stream_frames_handler))
-        .route("/speakers/unnamed", get(get_unnamed_speakers_handler))
-        .route("/speakers/update", post(update_speaker_handler))
-        .route("/speakers/search", get(search_speakers_handler))
-        .route("/speakers/delete", post(delete_speaker_handler))
-        .route(
-            "/speakers/hallucination",
-            post(mark_as_hallucination_handler),
-        )
-        .route("/speakers/merge", post(merge_speakers_handler))
-        .route("/speakers/similar", get(get_similar_speakers_handler))
-        .route("/experimental/frames/merge", post(merge_frames_handler))
-        .route("/experimental/validate/media", get(validate_media_handler))
-        .layer(cors);
-
-    #[cfg(feature = "experimental")]
-    {
-        router = router.route("/experimental/input_control", post(input_control_handler));
-    }
-
-    router
 }
 
 // Add the new handler
