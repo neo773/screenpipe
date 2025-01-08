@@ -466,6 +466,7 @@ pub async fn api_list_monitors(
     }
 }
 
+#[oasgen]
 pub(crate) async fn add_tags(
     State(state): State<Arc<AppState>>,
     Path((content_type, id)): Path<(String, i64)>,
@@ -938,6 +939,7 @@ impl SCServer {
     }
 }
 
+#[oasgen]
 async fn merge_frames_handler(
     State(state): State<Arc<AppState>>,
     JsonResponse(payload): JsonResponse<MergeVideosRequest>,
@@ -975,6 +977,7 @@ struct RawSqlQuery {
     query: String,
 }
 
+#[oasgen]
 async fn execute_raw_sql(
     State(state): State<Arc<AppState>>,
     JsonResponse(payload): JsonResponse<RawSqlQuery>,
@@ -1438,6 +1441,7 @@ where
         .map(Some)
 }
 
+#[oasgen]
 async fn get_unnamed_speakers_handler(
     State(state): State<Arc<AppState>>,
     Query(request): Query<GetUnnamedSpeakersRequest>,
@@ -1471,6 +1475,7 @@ async fn get_unnamed_speakers_handler(
     Ok(JsonResponse(speakers))
 }
 
+#[oasgen]
 async fn update_speaker_handler(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<UpdateSpeakerRequest>,
@@ -1504,6 +1509,7 @@ async fn update_speaker_handler(
     ))
 }
 
+#[oasgen]
 async fn search_speakers_handler(
     State(state): State<Arc<AppState>>,
     Query(request): Query<SearchSpeakersRequest>,
@@ -1514,6 +1520,7 @@ async fn search_speakers_handler(
     ))
 }
 
+#[oasgen]
 async fn delete_speaker_handler(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<DeleteSpeakerRequest>,
@@ -1552,6 +1559,7 @@ async fn delete_speaker_handler(
     Ok(JsonResponse(json!({"success": true})))
 }
 
+#[oasgen]
 async fn mark_as_hallucination_handler(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<MarkAsHallucinationRequest>,
@@ -1567,6 +1575,7 @@ async fn mark_as_hallucination_handler(
     Ok(JsonResponse(json!({"success": true})))
 }
 
+#[oasgen]
 async fn merge_speakers_handler(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<MergeSpeakersRequest>,
@@ -1588,6 +1597,7 @@ async fn merge_speakers_handler(
     Ok(JsonResponse(json!({"success": true})))
 }
 
+#[oasgen]
 async fn get_similar_speakers_handler(
     State(state): State<Arc<AppState>>,
     Query(request): Query<GetSimilarSpeakersRequest>,
@@ -1609,7 +1619,7 @@ async fn get_similar_speakers_handler(
     Ok(JsonResponse(similar_speakers))
 }
 
-// Add the new handler
+
 async fn stream_frames_handler(
     Query(request): Query<StreamFramesRequest>,
     State(state): State<Arc<AppState>>,
@@ -1695,28 +1705,25 @@ async fn stream_frames_handler(
     )
 }
 
-// Add this new handler function
+#[oasgen]
 pub async fn delete_pipe_handler(
     State(state): State<Arc<AppState>>,
     Json(request): Json<DeletePipeRequest>,
-) -> impl IntoResponse {
+) -> Result<JsonResponse<Value>, (StatusCode, JsonResponse<Value>)> {
     match state.pipe_manager.delete_pipe(&request.pipe_id).await {
-        Ok(_) => (
-            StatusCode::OK,
-            Json(json!({
-                "success": true,
-                "message": "pipe deleted successfully"
-            })),
-        ),
+        Ok(_) => Ok(JsonResponse(json!({
+            "success": true,
+            "message": "pipe deleted successfully"
+        }))),
         Err(e) => {
             error!("failed to delete pipe: {}", e);
-            (
+            Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({
-                "success": false,
-                "error": format!("failed to delete pipe: {}", e)
-                })),
-            )
+                JsonResponse(json!({
+                    "success": false,
+                    "error": format!("failed to delete pipe: {}", e)
+                }))
+            ))
         }
     }
 }
