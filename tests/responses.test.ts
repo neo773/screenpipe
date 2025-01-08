@@ -1,5 +1,5 @@
-import { createResponseHeaders } from 'test-sc-api/core';
-import { Headers } from 'test-sc-api/_shims/index';
+import { createResponseHeaders } from 'test-sc/core';
+import { Headers } from 'test-sc/_shims/index';
 
 describe('response parsing', () => {
   // TODO: test unicode characters

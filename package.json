@@ -1,5 +1,5 @@
 {
-  "name": "test-sc-api",
+  "name": "test-sc",
   "version": "2.0.0",
   "description": "The official TypeScript library for the Test Sc API",
   "author": "Test Sc <dev-feedback@test-sc.com>",
@@ -59,8 +59,8 @@
     "./shims/web.mjs"
   ],
   "imports": {
-    "test-sc-api": ".",
-    "test-sc-api/*": "./src/*"
+    "test-sc": ".",
+    "test-sc/*": "./src/*"
   },
   "exports": {
     "./_shims/auto/*": {

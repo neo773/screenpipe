@@ -1,7 +1,7 @@
 import iconv from 'iconv-lite';
-import { stringify } from 'test-sc-api/internal/qs';
-import { encode } from 'test-sc-api/internal/qs/utils';
-import { StringifyOptions } from 'test-sc-api/internal/qs/types';
+import { stringify } from 'test-sc/internal/qs';
+import { encode } from 'test-sc/internal/qs/utils';
+import { StringifyOptions } from 'test-sc/internal/qs/types';
 import { empty_test_cases } from './empty-keys-cases';
 import assert from 'assert';
 
