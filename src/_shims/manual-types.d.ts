@@ -4,8 +4,8 @@
 /**
  * Types will get added to this namespace when you import one of the following:
  *
- *   import 'nep773/shims/node'
- *   import 'nep773/shims/web'
+ *   import 'test-sc-openapi/shims/node'
+ *   import 'test-sc-openapi/shims/web'
  *
  * Importing more than one will cause type and runtime errors.
  */

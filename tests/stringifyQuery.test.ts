@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { Nep773 } from 'nep773';
+import { Nep773 } from 'test-sc-openapi';
 
 const { stringifyQuery } = Nep773.prototype as any;
 

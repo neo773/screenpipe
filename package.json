@@ -1,5 +1,5 @@
 {
-  "name": "nep773",
+  "name": "test-sc-openapi",
   "version": "0.0.1-alpha.0",
   "description": "The official TypeScript library for the Nep773 API",
   "author": "Nep773 <dev-feedback@nep773.com>",
@@ -59,8 +59,8 @@
     "./shims/web.mjs"
   ],
   "imports": {
-    "nep773": ".",
-    "nep773/*": "./src/*"
+    "test-sc-openapi": ".",
+    "test-sc-openapi/*": "./src/*"
   },
   "exports": {
     "./_shims/auto/*": {
