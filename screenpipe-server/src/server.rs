@@ -2,7 +2,7 @@ use axum::{
     extract::{Json, Path, Query, State},
     http::StatusCode,
     response::{sse::Event, IntoResponse, Json as JsonResponse, Sse},
-    routing::{get, post},
+    routing::{self, get, post},
     serve, Router,
 };
 use crossbeam::queue::SegQueue;
@@ -59,7 +59,7 @@ use tower_http::{cors::CorsLayer, trace::DefaultMakeSpan};
 use enigo::{Enigo, Key, Settings};
 
 use screenpipe_audio::LAST_AUDIO_CAPTURE;
-use oasgen::{oasgen, OaSchema, Server as OaServer};
+use oasgen::{oasgen, OaSchema, Server };
 
 use std::str::FromStr;
 
@@ -798,7 +798,7 @@ async fn list_pipes_handler(State(state): State<Arc<AppState>>) -> JsonResponse<
     }))
 }
 
-pub struct Server {
+pub struct SCServer {
     db: Arc<DatabaseManager>,
     addr: SocketAddr,
     vision_control: Arc<AtomicBool>,
@@ -810,7 +810,7 @@ pub struct Server {
     ui_monitoring_enabled: bool,
 }
 
-impl Server {
+impl SCServer {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         db: Arc<DatabaseManager>,
@@ -823,7 +823,7 @@ impl Server {
         audio_disabled: bool,
         ui_monitoring_enabled: bool,
     ) -> Self {
-        Server {
+        SCServer {
             db,
             addr,
             vision_control,
@@ -866,42 +866,30 @@ impl Server {
                 None
             },
         });
-        let server = OaServer::axum()
-        .route_yaml_spec("/openapi.yaml") // the spec will be available at /openapi.yaml
-        .route_json_spec("/openapi.json") // the spec will be available at /openapi.json
-        .freeze();
 
+        // Create the OpenAPI server
+        let server = Server::axum()
+            .get("/healthcheck", health_check)
+            .route_yaml_spec("/openapi.yaml")
+            .route_json_spec("/openapi.json")
+            .freeze();
+
+        // Create the main router and merge with OpenAPI routes
         let app = create_router()
-            .layer(ApiPluginLayer::new(api_plugin))
-            .layer(
-                CorsLayer::new()
-                    .allow_origin(Any)
-                    .allow_methods(Any)
-                    .allow_headers(Any)
-                    .expose_headers([
-                        axum::http::header::CONTENT_TYPE,
-                        axum::http::header::CACHE_CONTROL,
-                    ]), // Important for SSE
-            )
-            .layer(
-                TraceLayer::new_for_http()
-                    .make_span_with(DefaultMakeSpan::new().include_headers(true)),
-            )
+            .merge(server.into_router())
             .with_state(app_state)
-            .merge(server.into_router());
+            .layer(TraceLayer::new_for_http().make_span_with(DefaultMakeSpan::default()));
 
-        info!("Server starting on {}", self.addr);
+        // Create the listener
+        let listener = TcpListener::bind(&self.addr).await?;
+        info!("Server listening on {}", self.addr);
 
-        match serve(TcpListener::bind(self.addr).await?, app.into_make_service()).await {
-            Ok(_) => {
-                info!("Server stopped gracefully");
-                Ok(())
-            }
-            Err(e) => {
-                error!("Server error: {}", e);
-                Err(e)
-            }
-        }
+        // Start serving
+        serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+            .await
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+
+        Ok(())
     }
 }
 
