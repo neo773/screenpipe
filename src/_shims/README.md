@@ -1,9 +1,9 @@
 # 👋 Wondering what everything in here does?
 
-`test-sc` supports a wide variety of runtime environments like Node.js, Deno, Bun, browsers, and various
+`test-sc-api` supports a wide variety of runtime environments like Node.js, Deno, Bun, browsers, and various
 edge runtimes, as well as both CommonJS (CJS) and EcmaScript Modules (ESM).
 
-To do this, `test-sc` provides shims for either using `node-fetch` when in Node (because `fetch` is still experimental there) or the global `fetch` API built into the environment when not in Node.
+To do this, `test-sc-api` provides shims for either using `node-fetch` when in Node (because `fetch` is still experimental there) or the global `fetch` API built into the environment when not in Node.
 
 It uses [conditional exports](https://nodejs.org/api/packages.html#conditional-exports) to
 automatically select the correct shims for each environment. However, conditional exports are a fairly new
@@ -15,32 +15,32 @@ getting the wrong raw `Response` type from `.asResponse()`, for example.
 
 The user can work around these issues by manually importing one of:
 
-- `import 'test-sc/shims/node'`
-- `import 'test-sc/shims/web'`
+- `import 'test-sc-api/shims/node'`
+- `import 'test-sc-api/shims/web'`
 
 All of the code here in `_shims` handles selecting the automatic default shims or manual overrides.
 
 ### How it works - Runtime
 
-Runtime shims get installed by calling `setShims` exported by `test-sc/_shims/registry`.
+Runtime shims get installed by calling `setShims` exported by `test-sc-api/_shims/registry`.
 
-Manually importing `test-sc/shims/node` or `test-sc/shims/web`, calls `setShims` with the respective runtime shims.
+Manually importing `test-sc-api/shims/node` or `test-sc-api/shims/web`, calls `setShims` with the respective runtime shims.
 
-All client code imports shims from `test-sc/_shims/index`, which:
+All client code imports shims from `test-sc-api/_shims/index`, which:
 
 - checks if shims have been set manually
-- if not, calls `setShims` with the shims from `test-sc/_shims/auto/runtime`
-- re-exports the installed shims from `test-sc/_shims/registry`.
+- if not, calls `setShims` with the shims from `test-sc-api/_shims/auto/runtime`
+- re-exports the installed shims from `test-sc-api/_shims/registry`.
 
-`test-sc/_shims/auto/runtime` exports web runtime shims.
-If the `node` export condition is set, the export map replaces it with `test-sc/_shims/auto/runtime-node`.
+`test-sc-api/_shims/auto/runtime` exports web runtime shims.
+If the `node` export condition is set, the export map replaces it with `test-sc-api/_shims/auto/runtime-node`.
 
 ### How it works - Type time
 
-All client code imports shim types from `test-sc/_shims/index`, which selects the manual types from `test-sc/_shims/manual-types` if they have been declared, otherwise it exports the auto types from `test-sc/_shims/auto/types`.
+All client code imports shim types from `test-sc-api/_shims/index`, which selects the manual types from `test-sc-api/_shims/manual-types` if they have been declared, otherwise it exports the auto types from `test-sc-api/_shims/auto/types`.
 
-`test-sc/_shims/manual-types` exports an empty namespace.
-Manually importing `test-sc/shims/node` or `test-sc/shims/web` merges declarations into this empty namespace, so they get picked up by `test-sc/_shims/index`.
+`test-sc-api/_shims/manual-types` exports an empty namespace.
+Manually importing `test-sc-api/shims/node` or `test-sc-api/shims/web` merges declarations into this empty namespace, so they get picked up by `test-sc-api/_shims/index`.
 
-`test-sc/_shims/auto/types` exports web type definitions.
-If the `node` export condition is set, the export map replaces it with `test-sc/_shims/auto/types-node`, though TS only picks this up if `"moduleResolution": "nodenext"` or `"moduleResolution": "bundler"`.
+`test-sc-api/_shims/auto/types` exports web type definitions.
+If the `node` export condition is set, the export map replaces it with `test-sc-api/_shims/auto/types-node`, though TS only picks this up if `"moduleResolution": "nodenext"` or `"moduleResolution": "bundler"`.

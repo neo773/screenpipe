@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import TestSc from 'test-sc';
-import { APIUserAbortError } from 'test-sc';
-import { Headers } from 'test-sc/core';
+import TestSc from 'test-sc-api';
+import { APIUserAbortError } from 'test-sc-api';
+import { Headers } from 'test-sc-api/core';
 import defaultFetch, { Response, type RequestInit, type RequestInfo } from 'node-fetch';
 
 describe('instantiate client', () => {

@@ -9,9 +9,9 @@ export function getRuntime({ manuallyImported }: { manuallyImported?: boolean } 
   const recommendation =
     manuallyImported ?
       `You may need to use polyfills`
-    : `Add one of these imports before your first \`import … from 'test-sc'\`:
-- \`import 'test-sc/shims/node'\` (if you're running on Node)
-- \`import 'test-sc/shims/web'\` (otherwise)
+    : `Add one of these imports before your first \`import … from 'test-sc-api'\`:
+- \`import 'test-sc-api/shims/node'\` (if you're running on Node)
+- \`import 'test-sc-api/shims/web'\` (otherwise)
 `;
 
   let _fetch, _Request, _Response, _Headers;
