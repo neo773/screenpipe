@@ -1,5 +1,5 @@
-import { createResponseHeaders } from 'nep773/core';
-import { Headers } from 'nep773/_shims/index';
+import { createResponseHeaders } from 'test-sc-openapi/core';
+import { Headers } from 'test-sc-openapi/_shims/index';
 
 describe('response parsing', () => {
   // TODO: test unicode characters

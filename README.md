@@ -1,6 +1,6 @@
 # Nep773 Node API Library
 
-[![NPM version](https://img.shields.io/npm/v/nep773.svg)](https://npmjs.org/package/nep773) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/nep773)
+[![NPM version](https://img.shields.io/npm/v/test-sc-openapi.svg)](https://npmjs.org/package/test-sc-openapi) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/test-sc-openapi)
 
 This library provides convenient access to the Nep773 REST API from server-side TypeScript or JavaScript.
 
@@ -11,11 +11,8 @@ It is generated with [Stainless](https://www.stainlessapi.com/).
 ## Installation
 
 ```sh
-npm install git+ssh://git@github.com:stainless-sdks/nep773-node.git
+npm install test-sc-openapi
 ```
-
-> [!NOTE]
-> Once this package is [published to npm](https://app.stainlessapi.com/docs/guides/publish), this will become: `npm install nep773`
 
 ## Usage
 
@@ -23,7 +20,7 @@ The full API of this library can be found in [api.md](api.md).
 
 <!-- prettier-ignore -->
 ```js
-import Nep773 from 'nep773';
+import Nep773 from 'test-sc-openapi';
 
 const client = new Nep773();
 
@@ -57,7 +54,7 @@ This library includes TypeScript definitions for all request params and response
 
 <!-- prettier-ignore -->
 ```ts
-import Nep773 from 'nep773';
+import Nep773 from 'test-sc-openapi';
 
 const client = new Nep773();
 
@@ -291,12 +288,12 @@ add the following import before your first import `from "Nep773"`:
 ```ts
 // Tell TypeScript and the package to use the global web fetch instead of node-fetch.
 // Note, despite the name, this does not add any polyfills, but expects them to be provided if needed.
-import 'nep773/shims/web';
-import Nep773 from 'nep773';
+import 'test-sc-openapi/shims/web';
+import Nep773 from 'test-sc-openapi';
 ```
 
-To do the inverse, add `import "nep773/shims/node"` (which does import polyfills).
-This can also be useful if you are getting the wrong TypeScript types for `Response` ([more details](https://github.com/stainless-sdks/nep773-node/tree/main/src/_shims#readme)).
+To do the inverse, add `import "test-sc-openapi/shims/node"` (which does import polyfills).
+This can also be useful if you are getting the wrong TypeScript types for `Response` ([more details](https://github.com/neo773/screenpipe/tree/main/src/_shims#readme)).
 
 ### Logging and middleware
 
@@ -305,7 +302,7 @@ which can be used to inspect or alter the `Request` or `Response` before/after e
 
 ```ts
 import { fetch } from 'undici'; // as one example
-import Nep773 from 'nep773';
+import Nep773 from 'test-sc-openapi';
 
 const client = new Nep773({
   fetch: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
@@ -370,7 +367,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/nep773-node/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/neo773/screenpipe/issues) with questions, bugs, or suggestions.
 
 ## Requirements
 

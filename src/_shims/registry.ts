@@ -42,11 +42,13 @@ export let isFsReadStream: Shims['isFsReadStream'] | undefined = undefined;
 export function setShims(shims: Shims, options: { auto: boolean } = { auto: false }) {
   if (auto) {
     throw new Error(
-      `you must \`import 'nep773/shims/${shims.kind}'\` before importing anything else from nep773`,
+      `you must \`import 'test-sc-openapi/shims/${shims.kind}'\` before importing anything else from test-sc-openapi`,
     );
   }
   if (kind) {
-    throw new Error(`can't \`import 'nep773/shims/${shims.kind}'\` after \`import 'nep773/shims/${kind}'\``);
+    throw new Error(
+      `can't \`import 'test-sc-openapi/shims/${shims.kind}'\` after \`import 'test-sc-openapi/shims/${kind}'\``,
+    );
   }
   auto = options.auto;
   kind = shims.kind;

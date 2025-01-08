@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Nep773 from 'nep773';
-import { APIUserAbortError } from 'nep773';
-import { Headers } from 'nep773/core';
+import Nep773 from 'test-sc-openapi';
+import { APIUserAbortError } from 'test-sc-openapi';
+import { Headers } from 'test-sc-openapi/core';
 import defaultFetch, { Response, type RequestInit, type RequestInfo } from 'node-fetch';
 
 describe('instantiate client', () => {

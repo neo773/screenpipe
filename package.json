@@ -1,12 +1,12 @@
 {
-  "name": "nep773",
-  "version": "0.0.1-alpha.0",
+  "name": "test-sc-openapi",
+  "version": "0.0.1-alpha.1",
   "description": "The official TypeScript library for the Nep773 API",
   "author": "Nep773 <dev-feedback@nep773.com>",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "type": "commonjs",
-  "repository": "github:stainless-sdks/nep773-node",
+  "repository": "github:neo773/screenpipe",
   "license": "Apache-2.0",
   "packageManager": "yarn@1.22.22",
   "files": [
@@ -59,8 +59,8 @@
     "./shims/web.mjs"
   ],
   "imports": {
-    "nep773": ".",
-    "nep773/*": "./src/*"
+    "test-sc-openapi": ".",
+    "test-sc-openapi/*": "./src/*"
   },
   "exports": {
     "./_shims/auto/*": {
