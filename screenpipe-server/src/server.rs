@@ -1136,6 +1136,7 @@ async fn add_transcription_to_db(
     Ok(())
 }
 
+#[oasgen]
 pub(crate) async fn add_to_database(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<AddContentRequest>,
