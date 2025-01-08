@@ -5,8 +5,8 @@
   "compilerOptions": {
     "rootDir": "./dist/src",
     "paths": {
-      "nep773/*": ["dist/src/*"],
-      "nep773": ["dist/src/index.ts"],
+      "test-sc-openapi/*": ["dist/src/*"],
+      "test-sc-openapi": ["dist/src/index.ts"],
     },
     "noEmit": false,
     "declaration": true,

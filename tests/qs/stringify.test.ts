@@ -1,7 +1,7 @@
 import iconv from 'iconv-lite';
-import { stringify } from 'nep773/internal/qs';
-import { encode } from 'nep773/internal/qs/utils';
-import { StringifyOptions } from 'nep773/internal/qs/types';
+import { stringify } from 'test-sc-openapi/internal/qs';
+import { encode } from 'test-sc-openapi/internal/qs/utils';
+import { StringifyOptions } from 'test-sc-openapi/internal/qs/types';
 import { empty_test_cases } from './empty-keys-cases';
 import assert from 'assert';
 

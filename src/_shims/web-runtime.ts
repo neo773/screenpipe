@@ -9,9 +9,9 @@ export function getRuntime({ manuallyImported }: { manuallyImported?: boolean } 
   const recommendation =
     manuallyImported ?
       `You may need to use polyfills`
-    : `Add one of these imports before your first \`import … from 'nep773'\`:
-- \`import 'nep773/shims/node'\` (if you're running on Node)
-- \`import 'nep773/shims/web'\` (otherwise)
+    : `Add one of these imports before your first \`import … from 'test-sc-openapi'\`:
+- \`import 'test-sc-openapi/shims/node'\` (if you're running on Node)
+- \`import 'test-sc-openapi/shims/web'\` (otherwise)
 `;
 
   let _fetch, _Request, _Response, _Headers;
