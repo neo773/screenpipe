@@ -1,8 +1,8 @@
-# Nep773 Node API Library
+# Neo773 Node API Library
 
 [![NPM version](https://img.shields.io/npm/v/test-sc-openapi.svg)](https://npmjs.org/package/test-sc-openapi) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/test-sc-openapi)
 
-This library provides convenient access to the Nep773 REST API from server-side TypeScript or JavaScript.
+This library provides convenient access to the Neo773 REST API from server-side TypeScript or JavaScript.
 
 The REST API documentation can be found on [docs.nep773.com](https://docs.nep773.com). The full API of this library can be found in [api.md](api.md).
 
@@ -20,9 +20,9 @@ The full API of this library can be found in [api.md](api.md).
 
 <!-- prettier-ignore -->
 ```js
-import Nep773 from 'test-sc-openapi';
+import Neo773 from 'test-sc-openapi';
 
-const client = new Nep773();
+const client = new Neo773();
 
 async function main() {
   const response = await client.add.execute({
@@ -54,12 +54,12 @@ This library includes TypeScript definitions for all request params and response
 
 <!-- prettier-ignore -->
 ```ts
-import Nep773 from 'test-sc-openapi';
+import Neo773 from 'test-sc-openapi';
 
-const client = new Nep773();
+const client = new Neo773();
 
 async function main() {
-  const params: Nep773.AddExecuteParams = {
+  const params: Neo773.AddExecuteParams = {
     content: {
       content_type: 'content_type',
       data: [
@@ -75,7 +75,7 @@ async function main() {
     },
     device_name: 'device_name',
   };
-  const response: Nep773.AddExecuteResponse = await client.add.execute(params);
+  const response: Neo773.AddExecuteResponse = await client.add.execute(params);
 }
 
 main();
@@ -110,7 +110,7 @@ async function main() {
       device_name: 'device_name',
     })
     .catch(async (err) => {
-      if (err instanceof Nep773.APIError) {
+      if (err instanceof Neo773.APIError) {
         console.log(err.status); // 400
         console.log(err.name); // BadRequestError
         console.log(err.headers); // {server: 'nginx', ...}
@@ -147,7 +147,7 @@ You can use the `maxRetries` option to configure or disable this:
 <!-- prettier-ignore -->
 ```js
 // Configure the default for all requests:
-const client = new Nep773({
+const client = new Neo773({
   maxRetries: 0, // default is 2
 });
 
@@ -164,7 +164,7 @@ Requests time out after 1 minute by default. You can configure this with a `time
 <!-- prettier-ignore -->
 ```ts
 // Configure the default for all requests:
-const client = new Nep773({
+const client = new Neo773({
   timeout: 20 * 1000, // 20 seconds (default is 1 minute)
 });
 
@@ -188,7 +188,7 @@ You can also use the `.withResponse()` method to get the raw `Response` along wi
 
 <!-- prettier-ignore -->
 ```ts
-const client = new Nep773();
+const client = new Neo773();
 
 const response = await client.add
   .execute({
@@ -283,13 +283,13 @@ By default, this library uses `node-fetch` in Node, and expects a global `fetch`
 
 If you would prefer to use a global, web-standards-compliant `fetch` function even in a Node environment,
 (for example, if you are running Node with `--experimental-fetch` or using NextJS which polyfills with `undici`),
-add the following import before your first import `from "Nep773"`:
+add the following import before your first import `from "Neo773"`:
 
 ```ts
 // Tell TypeScript and the package to use the global web fetch instead of node-fetch.
 // Note, despite the name, this does not add any polyfills, but expects them to be provided if needed.
 import 'test-sc-openapi/shims/web';
-import Nep773 from 'test-sc-openapi';
+import Neo773 from 'test-sc-openapi';
 ```
 
 To do the inverse, add `import "test-sc-openapi/shims/node"` (which does import polyfills).
@@ -302,9 +302,9 @@ which can be used to inspect or alter the `Request` or `Response` before/after e
 
 ```ts
 import { fetch } from 'undici'; // as one example
-import Nep773 from 'test-sc-openapi';
+import Neo773 from 'test-sc-openapi';
 
-const client = new Nep773({
+const client = new Neo773({
   fetch: async (url: RequestInfo, init?: RequestInit): Promise<Response> => {
     console.log('About to make a request', url, init);
     const response = await fetch(url, init);
@@ -329,7 +329,7 @@ import http from 'http';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
 // Configure the default for all requests:
-const client = new Nep773({
+const client = new Neo773({
   httpAgent: new HttpsProxyAgent(process.env.PROXY_URL),
 });
 
