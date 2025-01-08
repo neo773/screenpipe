@@ -23,7 +23,6 @@ pub use highlight::Highlight;
 pub use pipe_manager::PipeManager;
 pub use resource_monitor::{ResourceMonitor, RestartSignal};
 pub use screenpipe_core::Language;
-pub use server::create_router;
 pub use server::health_check;
 pub use server::AppState;
 pub use server::ContentItem;

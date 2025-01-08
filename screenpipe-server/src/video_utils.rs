@@ -1,5 +1,6 @@
 use anyhow::Result;
 use base64::{engine::general_purpose, Engine as _};
+use oasgen::OaSchema;
 use screenpipe_core::find_ffmpeg_path;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -71,7 +72,7 @@ pub struct MergeVideosResponse {
     video_path: String,
 }
 
-#[derive(Deserialize)]
+#[derive(OaSchema, Deserialize)]
 pub struct ValidateMediaParams {
    pub file_path: String,
 }

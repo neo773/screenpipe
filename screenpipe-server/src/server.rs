@@ -395,6 +395,7 @@ pub(crate) async fn search(
     }))
 }
 
+#[oasgen]
 pub(crate) async fn api_list_audio_devices(
     State(_state): State<Arc<AppState>>,
 ) -> Result<JsonResponse<Vec<ListDeviceResponse>>, (StatusCode, JsonResponse<serde_json::Value>)> {
@@ -440,6 +441,7 @@ pub(crate) async fn api_list_audio_devices(
     }
 }
 
+#[oasgen]
 pub async fn api_list_monitors(
 ) -> Result<JsonResponse<Vec<MonitorInfo>>, (StatusCode, JsonResponse<serde_json::Value>)> {
     let monitors = list_monitors().await;
@@ -492,6 +494,7 @@ pub(crate) async fn add_tags(
     }
 }
 
+#[oasgen]
 pub(crate) async fn remove_tags(
     State(state): State<Arc<AppState>>,
     Path((content_type, id)): Path<(String, i64)>,
@@ -647,6 +650,7 @@ struct UpdatePipeConfigRequest {
 }
 
 // Handler functions
+#[oasgen]
 async fn download_pipe_handler(
     State(state): State<Arc<AppState>>,
     JsonResponse(payload): JsonResponse<DownloadPipeRequest>,
@@ -673,6 +677,7 @@ async fn download_pipe_handler(
     }
 }
 
+#[oasgen]
 async fn run_pipe_handler(
     State(state): State<Arc<AppState>>,
     JsonResponse(payload): JsonResponse<RunPipeRequest>,
@@ -706,6 +711,7 @@ async fn run_pipe_handler(
     }
 }
 
+#[oasgen]
 async fn stop_pipe_handler(
     State(state): State<Arc<AppState>>,
     JsonResponse(payload): JsonResponse<RunPipeRequest>,
@@ -738,6 +744,7 @@ async fn stop_pipe_handler(
     }
 }
 
+#[oasgen]
 async fn update_pipe_config_handler(
     State(state): State<Arc<AppState>>,
     JsonResponse(payload): JsonResponse<UpdatePipeConfigRequest>,
@@ -765,6 +772,7 @@ async fn update_pipe_config_handler(
     }
 }
 
+#[oasgen]
 async fn get_pipe_info_handler(
     State(state): State<Arc<AppState>>,
     Path(pipe_id): Path<String>,
@@ -785,6 +793,7 @@ async fn get_pipe_info_handler(
     }
 }
 
+#[oasgen]
 async fn list_pipes_handler(State(state): State<Arc<AppState>>) -> JsonResponse<Value> {
     debug!("Listing pipes");
     let pipes = state.pipe_manager.list_pipes().await;
@@ -947,6 +956,7 @@ async fn merge_frames_handler(
     }
 }
 
+#[oasgen]
 async fn validate_media_handler(
     State(_state): State<Arc<AppState>>,
     Query(params): Query<ValidateMediaParams>,
