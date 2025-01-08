@@ -1,6 +1,6 @@
-import { multipartFormRequestOptions, createForm } from 'nep773/core';
-import { Blob } from 'nep773/_shims/index';
-import { toFile } from 'nep773';
+import { multipartFormRequestOptions, createForm } from 'test-sc-openapi/core';
+import { Blob } from 'test-sc-openapi/_shims/index';
+import { toFile } from 'test-sc-openapi';
 
 describe('form data validation', () => {
   test('valid values do not error', async () => {

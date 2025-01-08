@@ -9,9 +9,9 @@
     "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
-      "nep773/_shims/auto/*": ["src/_shims/auto/*-node"],
-      "nep773/*": ["src/*"],
-      "nep773": ["src/index.ts"]
+      "test-sc-openapi/_shims/auto/*": ["src/_shims/auto/*-node"],
+      "test-sc-openapi/*": ["src/*"],
+      "test-sc-openapi": ["src/index.ts"]
     },
     "noEmit": true,
 

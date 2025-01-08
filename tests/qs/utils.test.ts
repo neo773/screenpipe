@@ -1,4 +1,4 @@
-import { combine, merge, is_buffer, assign_single_source } from 'nep773/internal/qs/utils';
+import { combine, merge, is_buffer, assign_single_source } from 'test-sc-openapi/internal/qs/utils';
 
 describe('merge()', function () {
   // t.deepEqual(merge(null, true), [null, true], 'merges true into null');

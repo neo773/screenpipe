@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { toFile, type ResponseLike } from 'nep773/uploads';
-import { File } from 'nep773/_shims/index';
+import { toFile, type ResponseLike } from 'test-sc-openapi/uploads';
+import { File } from 'test-sc-openapi/_shims/index';
 
 class MyClass {
   name: string = 'foo';
