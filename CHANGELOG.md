@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.1 (2025-01-08)
+
+Full Changelog: [v0.0.1-alpha.1...v0.1.0-alpha.1](https://github.com/neo773/screenpipe/compare/v0.0.1-alpha.1...v0.1.0-alpha.1)
+
+### Features
+
+* **api:** update via SDK Studio ([#6](https://github.com/neo773/screenpipe/issues/6)) ([876dd2a](https://github.com/neo773/screenpipe/commit/876dd2a1737a487727374a83bc77a8237f90387a))
+
 ## 0.0.1-alpha.1 (2025-01-08)
 
 Full Changelog: [v0.0.1-alpha.0...v0.0.1-alpha.1](https://github.com/neo773/screenpipe/compare/v0.0.1-alpha.0...v0.0.1-alpha.1)
