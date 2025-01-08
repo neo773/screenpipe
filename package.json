@@ -1,6 +1,6 @@
 {
   "name": "test-sc",
-  "version": "0.0.1-alpha.0",
+  "version": "2.0.0",
   "description": "The official TypeScript library for the Test Sc API",
   "author": "Test Sc <dev-feedback@test-sc.com>",
   "types": "dist/index.d.ts",
