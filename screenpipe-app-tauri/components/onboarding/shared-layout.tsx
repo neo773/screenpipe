@@ -10,8 +10,8 @@ interface OnboardingLayoutProps {
   showNavigation?: boolean;
   navigationProps?: {
     isLoading?: boolean;
-    handlePrevSlide?: () => void;
-    handleNextSlide?: () => void;
+    handlePrevSlide: () => void;
+    handleNextSlide: () => void;
     prevBtnText?: string;
     nextBtnText?: string;
   };
@@ -29,6 +29,7 @@ const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
     <div className="flex h-full flex-col">
       <DialogHeader className="flex flex-col px-2 justify-center items-center">
         {showLogo && (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             className="w-16 h-16 justify-center"
             src="/128x128.png"
