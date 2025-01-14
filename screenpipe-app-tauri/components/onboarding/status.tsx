@@ -193,10 +193,10 @@ const OnboardingStatus: React.FC<OnboardingStatusProps> = ({
             </Button>
           ) : status === "ok" ? (
             <div className="flex flex-col items-center space-y-3 text-center flex-1 justify-center min-h-[200px]">
-              <div className="size-[60px] bg-green-50 rounded-full flex items-center justify-center">
-                <Check className="size-8 text-green-600" />
+              <div className="size-[70px] bg-green-50 rounded-full flex items-center justify-center mb-2">
+                <Check className="size-10 text-green-600" />
               </div>
-              <p className="text-sm text-zinc-600">
+              <p className="text-sm text-[#17A34A] bg-[#EFFDF4] px-4 py-2 rounded-full">
                 setup complete ai models downloaded
               </p>
             </div>
