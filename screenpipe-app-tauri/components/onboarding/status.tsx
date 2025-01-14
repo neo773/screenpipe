@@ -18,6 +18,8 @@ import {
 import { useSettings } from "@/lib/hooks/use-settings";
 import { Label } from "../ui/label";
 import { trackError } from "@/lib/opentelemetry";
+import OnboardingLayout from "./shared-layout";
+import { Checkbox } from "../ui/checkbox";
 
 interface OnboardingStatusProps {
   className?: string;
@@ -147,106 +149,107 @@ const OnboardingStatus: React.FC<OnboardingStatusProps> = ({
   };
 
   return (
-    <div
-      className={`${className} w-full flex justify-between flex-col items-center`}
+    <OnboardingLayout
+      title="setting up screenpipe"
+      description="we need to download some ai models for you."
+      navigationProps={{
+        handlePrevSlide: handlePrev,
+        handleNextSlide: handleNext,
+        prevBtnText: "previous",
+        nextBtnText: "next",
+      }}
     >
-      <DialogHeader className="flex flex-col px-2 justify-center items-center">
-        <img
-          className="w-24 h-24 justify-center"
-          src="/128x128.png"
-          alt="screenpipe-logo"
-        />
-        <DialogTitle className="text-center text-2xl">
-          setting up screenpipe
-        </DialogTitle>
-        <h2 className="text-center text-sm">
-          we need to download some ai models for you.
-          <br />
-          this may take a few minutes depending on your internet connection
-        </h2>
-      </DialogHeader>
-      <div className="mt-4 text-sm text-zinc-600 mx-auto">
-        <p className="mb-2 text-center">how screenpipe works:</p>
-        <ul className="list-disc list-inside text-left">
-          <li>core recording process runs in the background</li>
-          <li>gui interface for easy interaction</li>
-          <li>can also be used as a standalone cli tool</li>
-          <li>captures screens & mics 24/7</li>
-          <li>extracts text (ocr) & speech-to-text</li>
-          <li>saves data locally for privacy</li>
-        </ul>
-      </div>
-
-      <p className="text-xs text-center text-zinc-500 mt-2">
-        if encountering any issues, you can proceed to the next step and it will
-        setup screenpipe when starting the recording process
-      </p>
-      <div className="flex items-center space-x-2 mt-4">
-        <Switch
-          id="chinese-mirror-toggle"
-          checked={useChineseMirror}
-          onCheckedChange={handleChineseMirrorToggle}
-        />
-        <Label
-          htmlFor="chinese-mirror-toggle"
-          className="flex items-center space-x-2"
-        >
-          <span>use chinese mirror for model downloads</span>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 cursor-default" />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>
-                  enable this option to use a chinese mirror for
-                  <br />
-                  downloading hugging face models
-                  <br />
-                  (e.g. whisper, embedded llama, etc.)
-                  <br />
-                  which are blocked in mainland china.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </Label>
-      </div>
-      {status === null ? (
-        <Button onClick={startSetup} disabled={isLoading} className="mt-4">
-          {isLoading ? (
-            <svg
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              xmlns="http://www.w3.org/2000/svg"
-              className="size-5 animate-spin stroke-zinc-400 mr-2"
+      <div className="flex flex-col items-center w-full max-w-xl mx-auto space-y-8 py-6">
+        {/* Status/Action Section */}
+        <div className="flex flex-col items-center space-y-4">
+          {status === null ? (
+            <Button
+              onClick={startSetup}
+              disabled={isLoading}
+              className="min-w-[140px] bg-zinc-900 hover:bg-zinc-800"
             >
-              <path d="M12 3v3m6.366-.366-2.12 2.12M21 12h-3m.366 6.366-2.12-2.12M12 21v-3m-6.366.366 2.12-2.12M3 12h3m-.366-6.366 2.12 2.12"></path>
-            </svg>
-          ) : null}
-          {isLoading ? "setting up..." : "start setup"}
-        </Button>
-      ) : status === "ok" ? (
-        <div className="flex flex-col items-center mt-4">
-          <Check className="size-5 stroke-zinc-400" />
-          <p className="text-sm text-zinc-600 mt-2">
-            screenpipe setup complete. ai models downloaded.
-          </p>
+              {isLoading ? (
+                <svg
+                  className="size-4 animate-spin mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              ) : null}
+              <span>{isLoading ? "setting up..." : "start setup"}</span>
+            </Button>
+          ) : status === "ok" ? (
+            <div className="flex flex-col items-center space-y-3 text-center">
+              <div className="size-[60px] bg-green-50 rounded-full flex items-center justify-center">
+                <Check className="size-8 text-green-600" />
+              </div>
+              <p className="text-sm text-zinc-600">
+                setup complete ai models downloaded.
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-red-500">{status}</p>
+          )}
         </div>
-      ) : (
-        <p className="text-center mt-4">{status}</p>
-      )}
-      <OnboardingNavigation
-        handlePrevSlide={handlePrev}
-        handleNextSlide={handleNext}
-        prevBtnText="previous"
-        nextBtnText="next"
-      />
-    </div>
+
+        {/* Chinese Mirror Toggle - Only show if setup is not complete */}
+        {status !== "ok" && (
+          <div className="flex items-center justify-center space-x-3">
+            <Checkbox
+              id="chinese-mirror-toggle"
+              checked={useChineseMirror}
+              onCheckedChange={handleChineseMirrorToggle}
+              className="data-[state=checked]:bg-zinc-900 !rounded-[4px]"
+            />
+            <Label
+              htmlFor="chinese-mirror-toggle"
+              className="flex items-center space-x-2"
+            >
+              <span className="text-sm text-zinc-700">
+                use chinese mirror for model downloads
+              </span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="h-4 w-4 text-zinc-400 hover:text-zinc-600 transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="max-w-xs">
+                    <p className="text-xs leading-relaxed">
+                      enable this option to use a chinese mirror for downloading
+                      hugging face models (e.g. whisper, embedded llama, etc.)
+                      which are blocked in mainland china.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Label>
+          </div>
+        )}
+
+        {/* Notice - Updated styling based on status */}
+        {status !== "ok" && (
+          <div className="px-6 py-4 bg-zinc-50/50 rounded-lg border border-zinc-100 backdrop-blur-sm">
+            <p className="text-xs text-zinc-500 text-center leading-relaxed">
+              if encountering any issues, you can proceed to the next step and
+              it will setup screenpipe when starting the recording process
+            </p>
+          </div>
+        )}
+      </div>
+    </OnboardingLayout>
   );
 };
 

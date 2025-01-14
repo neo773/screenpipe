@@ -7,13 +7,14 @@ import OnboardingAPISetup from "@/components/onboarding/api-setup";
 import { useOnboarding } from "@/lib/hooks/use-onboarding";
 import { useSettings } from "@/lib/hooks/use-settings";
 import Permissions from "@/components/onboarding/permissions";
+import OnboardingStatus from "./onboarding/status";
 
 
 const setFirstTimeUserFlag = async () => {
   await localforage.setItem("isFirstTimeUser", false);
 };
 
-type SlideKey = "intro" | "apiSetup" | "permissions";
+type SlideKey = "intro" | "apiSetup" | "permissions" | "status";
 
 interface SlideConfig {
   next: (options?: {
@@ -38,13 +39,17 @@ const slideFlow: Record<SlideKey, SlideConfig> = {
     prev: () => "intro",
   },
   permissions: {
-    next: () => null,
+    next: () => "status",
     prev: () => "apiSetup",
+  },
+  status: {
+    next: () => null,
+    prev: () => "permissions",
   },
 };
 
 const getSlideIndex = (slide: SlideKey): number => {
-  const slideOrder: SlideKey[] = ["intro", "apiSetup", "permissions"];
+  const slideOrder: SlideKey[] = ["intro", "apiSetup", "permissions", "status"];
   return slideOrder.indexOf(slide);
 };
 
@@ -153,6 +158,14 @@ const Onboarding: React.FC = () => {
       case "permissions":
         return (
           <Permissions
+            {...commonProps}
+            handleNextSlide={handleNextSlide}
+            handlePrevSlide={handlePrevSlide}
+          />
+        );
+      case "status":
+        return (
+          <OnboardingStatus
             {...commonProps}
             handleNextSlide={handleNextSlide}
             handlePrevSlide={handlePrevSlide}

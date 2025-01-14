@@ -5,8 +5,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 export interface OnboardingNavigationProps {
   className?: string;
   isLoading?: boolean;
-  handlePrevSlide: () => void;
-  handleNextSlide: () => void;
+  handlePrevSlide: () => void | null;
+  handleNextSlide: () => void | null;
   prevBtnText?: string;
   nextBtnText?: string;
 }
@@ -31,7 +31,7 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
         {prevBtnText}
       </Button>
       <Button onClick={handleNextSlide} disabled={isLoading}>
-        {nextBtnText}
+        {handleNextSlide === null ? nextBtnText : "finish"}
         <ArrowRight className="w-4 h-4 ml-2" />
       </Button>
     </div>
