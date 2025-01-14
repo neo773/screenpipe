@@ -6,7 +6,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useSettings } from "@/lib/hooks/use-settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, HelpCircle, ArrowUpRight } from "lucide-react";
-import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { open } from "@tauri-apps/plugin-shell";
 import {
   Tooltip,
@@ -14,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import OnboardingNavigation from "@/components/onboarding/navigation";
+import OnboardingLayout from "./shared-layout";
 import {
   Select,
   SelectContent,
@@ -22,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Form, FormItem } from "../ui/form";
 
 interface OnboardingAPISetupProps {
   className?: string;
@@ -54,12 +54,14 @@ const OnboardingAPISetup: React.FC<OnboardingAPISetupProps> = ({
 
   useEffect(() => {
     const { aiUrl, openaiApiKey, aiModel } = localSettings;
-    const isApiKeyRequired = aiUrl !== "https://ai-proxy.i-f9f.workers.dev/v1" && aiUrl !== "http://localhost:11434/v1";
-    
+    const isApiKeyRequired =
+      aiUrl !== "https://ai-proxy.i-f9f.workers.dev/v1" &&
+      aiUrl !== "http://localhost:11434/v1";
+
     setAreAllInputsFilled(
-      aiUrl.trim() !== "" && 
-      aiModel.trim() !== "" && 
-      (!isApiKeyRequired || openaiApiKey.trim() !== "")
+      aiUrl.trim() !== "" &&
+        aiModel.trim() !== "" &&
+        (!isApiKeyRequired || openaiApiKey.trim() !== "")
     );
   }, [localSettings]);
 
@@ -124,16 +126,10 @@ const OnboardingAPISetup: React.FC<OnboardingAPISetupProps> = ({
 
   const handleValidationMoveNextSlide = async () => {
     setIsValidating(true);
-    // Update settings here, before validation
     updateSettings(localSettings);
     const isValid = await validateInputs();
     setIsValidating(false);
     if (isValid) {
-      // toast({
-      //   title: "success",
-      //   description: "ai setup completed successfully",
-      //   variant: "default",
-      // });
       handleNextSlide();
     }
   };
@@ -276,154 +272,136 @@ const OnboardingAPISetup: React.FC<OnboardingAPISetupProps> = ({
   };
 
   return (
-    <div className={`flex h-[80%] flex-col ${className}`}>
-      <DialogHeader className="flex flex-col px-2 justify-center items-center">
-        <img
-          className="w-24 h-24 justify-center"
-          src="/128x128.png"
-          alt="screenpipe-logo"
-        />
-        <DialogTitle className="text-center text-2xl">
-          setup your ai settings
-        </DialogTitle>
-      </DialogHeader>
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle className="text-center">setup api key</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center space-y-4">
-          <div className="w-full max-w-md">
-            <div className="flex items-center gap-2 mb-2">
-              <Label htmlFor="aiUrl" className="min-w-[100px] text-right">
-                ai provider
-              </Label>
-              <div className="flex-grow flex items-center">
-                <Select
-                  onValueChange={handleAiUrlChange}
-                  value={getSelectValue()}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select AI provider" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="https://api.openai.com/v1">
-                      openai
-                    </SelectItem>
-                    <SelectItem value="http://localhost:11434/v1">
-                      ollama (local)
-                    </SelectItem>
-                    <SelectItem value="https://ai-proxy.i-f9f.workers.dev/v1">
-                      screenpipe cloud
-                    </SelectItem>
-                    <SelectItem value="custom">custom</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="ml-2 h-4 w-4 cursor-default" />
-                  </TooltipTrigger>
-                  <TooltipContent side="left">
-                    {getProviderTooltipContent()}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+    <OnboardingLayout
+      title="setup your ai settings"
+      description="setup your ai provider and model"
+      navigationProps={{
+        isLoading: isValidating,
+        handlePrevSlide,
+        handleNextSlide: areAllInputsFilled
+          ? handleValidationMoveNextSlide
+          : () => {
+              updateSettings(localSettings);
+              handleNextSlide();
+            },
+        prevBtnText: "previous",
+        nextBtnText: areAllInputsFilled ? "setup" : "i'll setup later",
+      }}
+    >
+      <form className="flex flex-col gap-4 justify-center px-48">
+        <FormItem>
+          <Label>ai provider</Label>
+          <div className="flex items-center gap-2">
+            <Select onValueChange={handleAiUrlChange} value={getSelectValue()}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select AI provider" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="https://api.openai.com/v1">
+                  openai
+                </SelectItem>
+                <SelectItem value="http://localhost:11434/v1">
+                  ollama (local)
+                </SelectItem>
+                <SelectItem value="https://ai-proxy.i-f9f.workers.dev/v1">
+                  screenpipe cloud
+                </SelectItem>
+                <SelectItem value="custom">custom</SelectItem>
+              </SelectContent>
+            </Select>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-4 w-4 cursor-default" />
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  {getProviderTooltipContent()}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-          {isCustomUrl && (
-            <div className="w-full max-w-md">
-              <div className="flex items-center gap-2 mb-2">
-                <Label
-                  htmlFor="customAiUrl"
-                  className="min-w-[100px] text-right"
-                >
-                  custom url
-                </Label>
-                <Input
-                  id="customAiUrl"
-                  value={localSettings.aiUrl}
-                  onChange={handleCustomUrlChange}
-                  className="flex-grow"
-                  placeholder="enter custom ai url"
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  autoComplete="off"
-                  type="text" // Explicitly set type to "text" to allow any characters
-                />
-              </div>
+        </FormItem>
+
+        {isCustomUrl && (
+          <FormItem>
+            <Label>custom url</Label>
+            <Input
+              id="customAiUrl"
+              value={localSettings.aiUrl}
+              onChange={handleCustomUrlChange}
+              className="w-full"
+              placeholder="enter custom ai url"
+              autoCorrect="off"
+              autoCapitalize="off"
+              autoComplete="off"
+              type="text"
+            />
+          </FormItem>
+        )}
+
+        {isApiKeyRequired && (
+          <FormItem>
+            <Label>api key</Label>
+            <div className="relative">
+              <Input
+                id="aiApiKey"
+                type={showApiKey ? "text" : "password"}
+                value={localSettings.openaiApiKey}
+                onChange={handleApiKeyChange}
+                className="pr-10"
+                placeholder="enter your ai api key"
+                autoCorrect="off"
+                autoCapitalize="off"
+                autoComplete="off"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0 h-full"
+                onClick={() => setShowApiKey(!showApiKey)}
+              >
+                {showApiKey ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
             </div>
-          )}
-          {isApiKeyRequired && (
-            <div className="w-full max-w-md">
-              <div className="flex items-center gap-2 mb-2">
-                <Label htmlFor="aiApiKey" className="min-w-[100px] text-right">
-                  api key
-                </Label>
-                <div className="flex-grow relative">
-                  <Input
-                    id="aiApiKey"
-                    type={showApiKey ? "text" : "password"}
-                    value={localSettings.openaiApiKey}
-                    onChange={handleApiKeyChange}
-                    className="pr-10"
-                    placeholder="enter your ai api key"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    autoComplete="off"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full"
-                    onClick={() => setShowApiKey(!showApiKey)}
-                  >
-                    {showApiKey ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="w-full max-w-md">
-            <div className="flex items-center gap-2 mb-2">
-              <Label htmlFor="aiModel" className="min-w-[100px] text-right">
-                ai model
-              </Label>
-              <div className="flex-grow relative">
-                <Input
-                  id="aiModel"
-                  value={localSettings.aiModel}
-                  onChange={handleModelChange}
-                  className="flex-grow"
-                  placeholder={
-                    localSettings.aiUrl === "http://localhost:11434/v1"
-                      ? "e.g., llama3.2:3b-instruct-q4_K_M"
-                      : "e.g., gpt-4o"
-                  }
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  autoComplete="off"
-                />
-              </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="ml-2 h-4 w-4 cursor-default" />
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    {getModelTooltipContent()}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+          </FormItem>
+        )}
+
+        <FormItem>
+          <Label>ai model</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              id="aiModel"
+              value={localSettings.aiModel}
+              onChange={handleModelChange}
+              className="w-full"
+              placeholder={
+                localSettings.aiUrl === "http://localhost:11434/v1"
+                  ? "e.g., llama3.2:3b-instruct-q4_K_M"
+                  : "e.g., gpt-4o"
+              }
+              autoCorrect="off"
+              autoCapitalize="off"
+              autoComplete="off"
+            />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-4 w-4 cursor-default" />
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  {getModelTooltipContent()}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-        </CardContent>
-      </Card>
+        </FormItem>
+      </form>
+
       <a
         onClick={() =>
           open("https://github.com/ollama/ollama?tab=readme-ov-file#ollama")
@@ -434,22 +412,7 @@ const OnboardingAPISetup: React.FC<OnboardingAPISetupProps> = ({
         don&apos;t have api key ? set up ollama locally
         <ArrowUpRight className="inline w-4 h-4 ml-1 " />
       </a>
-      <OnboardingNavigation
-        className="mt-8"
-        isLoading={isValidating}
-        handlePrevSlide={handlePrevSlide}
-        handleNextSlide={
-          areAllInputsFilled
-            ? handleValidationMoveNextSlide
-            : () => {
-                updateSettings(localSettings);
-                handleNextSlide();
-              }
-        }
-        prevBtnText="previous"
-        nextBtnText={areAllInputsFilled ? "setup" : "i'll setup later"}
-      />
-    </div>
+    </OnboardingLayout>
   );
 };
 

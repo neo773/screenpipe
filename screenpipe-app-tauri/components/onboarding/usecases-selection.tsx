@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import OnboardingNavigation from "@/components/onboarding/navigation";
 import posthog from "posthog-js";
+import { Card, CardContent } from "../ui/card";
 
 interface OnboardingSelectionProps {
   className?: string;
@@ -104,10 +105,12 @@ const OnboardingSelection: React.FC<OnboardingSelectionProps> = ({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="flex relative mt-8 justify-center items-center flex-col">
-        <span className="text-[15px] w-full text-center text-muted-foreground mb-2">
+      <span className="text-[15px] w-full text-center text-muted-foreground mb-2">
           you can select multiple options:
         </span>
+        
+      <Card>
+        <CardContent>
         {OPTIONS.map((option) => (
           <SelectionItem
             key={option.key}
@@ -116,7 +119,9 @@ const OnboardingSelection: React.FC<OnboardingSelectionProps> = ({
             onClick={() => handleOptionClick(option.key)}
           />
         ))}
-      </div>
+                
+      </CardContent>
+      </Card>
       <OnboardingNavigation
         handlePrevSlide={handlePrevSlide}
         handleNextSlide={handleNext}

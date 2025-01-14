@@ -1,44 +1,41 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight } from 'lucide-react'; // Importing icons
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
-interface OnboardingNavigationProps {
-  prevBtnText?: string,
-  nextBtnText?: string,
-  className?: string,
+export interface OnboardingNavigationProps {
+  className?: string;
   isLoading?: boolean;
   handlePrevSlide: () => void;
   handleNextSlide: () => void;
+  prevBtnText?: string;
+  nextBtnText?: string;
 }
 
-const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({ 
-  nextBtnText = "",
-  prevBtnText = "",
+const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
   className = "",
-  isLoading,
+  isLoading = false,
   handlePrevSlide,
   handleNextSlide,
+  prevBtnText = "back",
+  nextBtnText = "next",
 }) => {
   return (
-    <div className={`flex justify-between items-center mx-auto ${className} fixed bottom-0 left-20 right-20 p-4 bg-transparent max-w-screen-lg`}>
-      <Button 
-        className="flex items-center w-fit min-w-32 disabled:!cursor-not-allowed disabled:!pointer-events-auto"
-        variant={"outline"}
+    <div className={`flex justify-between items-center ${className}`}>
+      <Button
+        variant="ghost"
         onClick={handlePrevSlide}
         disabled={isLoading}
+        className="text-muted-foreground"
       >
-        <ArrowLeft className="mr-2" /> {/* Icon with margin */}
+        <ArrowLeft className="w-4 h-4 mr-2" />
         {prevBtnText}
       </Button>
-      <Button 
-        className="flex items-center w-fit min-w-32 disabled:!cursor-not-allowed disabled:!pointer-events-auto" 
-        onClick={handleNextSlide}
-        disabled={isLoading}
-      >
+      <Button onClick={handleNextSlide} disabled={isLoading}>
         {nextBtnText}
-        <ArrowRight className="ml-2" /> {/* Icon with margin */}
+        <ArrowRight className="w-4 h-4 ml-2" />
       </Button>
     </div>
   );
-} 
+};
+
 export default OnboardingNavigation;
