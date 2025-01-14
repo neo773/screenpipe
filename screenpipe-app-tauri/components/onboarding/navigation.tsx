@@ -31,7 +31,7 @@ const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
         {prevBtnText}
       </Button>
       <Button onClick={handleNextSlide} disabled={isLoading}>
-        {handleNextSlide === null ? nextBtnText : "finish"}
+        {handleNextSlide === null ? "finish" : nextBtnText}
         <ArrowRight className="w-4 h-4 ml-2" />
       </Button>
     </div>
