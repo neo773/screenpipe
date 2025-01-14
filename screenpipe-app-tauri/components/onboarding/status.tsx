@@ -192,12 +192,12 @@ const OnboardingStatus: React.FC<OnboardingStatusProps> = ({
               <span>{isLoading ? "setting up..." : "start setup"}</span>
             </Button>
           ) : status === "ok" ? (
-            <div className="flex flex-col items-center space-y-3 text-center">
+            <div className="flex flex-col items-center space-y-3 text-center flex-1 justify-center min-h-[200px]">
               <div className="size-[60px] bg-green-50 rounded-full flex items-center justify-center">
                 <Check className="size-8 text-green-600" />
               </div>
               <p className="text-sm text-zinc-600">
-                setup complete ai models downloaded.
+                setup complete ai models downloaded
               </p>
             </div>
           ) : (
