@@ -935,8 +935,8 @@ export const PipeStore: React.FC = () => {
     // Run check immediately
     checkForUpdates();
 
-    // Set up interval to check every 5 minutes
-    const interval = setInterval(checkForUpdates, 5 * 60 * 1000);
+    // Set up interval to check every 10 seconds actual check  is done in the function
+    const interval = setInterval(checkForUpdates, 10 * 1000);
     
     return () => clearInterval(interval);
   }, [settings.user.token]);
