@@ -939,7 +939,7 @@ export const PipeStore: React.FC = () => {
     const interval = setInterval(checkForUpdates, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [settings.user.token]);
 
   useEffect(() => {
     const setupDeepLink = async () => {
